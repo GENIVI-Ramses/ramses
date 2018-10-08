@@ -10,4 +10,10 @@
 
 cd /home/ramses-build
 
-exec /bin/bash
+if [ $# -eq 0 ]; then
+	# no commands supplied
+	exec /bin/bash
+else
+	# commands supplied
+	exec /bin/bash -c "$*"
+fi

@@ -2,3 +2,13 @@ sudo: required
 
 services:
   - docker
+  
+before_install:
+  - docker build -t ramses-basic scripts/docker/ramses-basic  
+  - mkdir -p ../build
+
+script:
+  - pwd
+  - ls -lah
+  - docker run -v $(pwd):/home/ramses-build/git:ro -v $(pwd)/../build:/home/ramses-build/build ramses-basic /bin/sh -c "ls -lah; pwd; ./build-ramses.sh"
+  
