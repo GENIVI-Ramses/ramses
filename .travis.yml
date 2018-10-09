@@ -14,7 +14,6 @@ before_install:
   - sudo apt-get install -qq g++-5
   - export CXX="g++-5"
   - export CC="gcc-5"
-  - mkdir build; cd build; cmake ..
 
 addons:
   coverity_scan:
@@ -27,4 +26,8 @@ addons:
     branch_pattern: coverity_scan
 
 script:
-  - cd build; cmake --build .
+  - if [[ "${COVERITY_SCAN_BRANCH}" == 1 ]];
+      then
+        echo "Don't build on coverty_scan branch.";
+        exit 0;
+    fi
