@@ -21,6 +21,6 @@ addons:
     build_command: "cd build; cmake --build ."
     branch_pattern: coverity_scan
 
-
 script:
-  - exit 0;
+  - mkdir build; cd build; cmake ..
+  - cd build; cmake --build .
