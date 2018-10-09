@@ -23,4 +23,4 @@ cmake \
     -Wno-dev \
     $RAMSES_SOURCE
 
-cmake --build $RAMSES_BUILD --target install
+cmake --build $RAMSES_BUILD --target install -- -j4
