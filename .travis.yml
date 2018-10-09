@@ -6,6 +6,7 @@ services:
 before_install:
   - docker build -t ramses-basic scripts/docker/ramses-basic
   - mkdir -p ../build
+  - git submodule update --init --recursive
 
 script:
   - docker run -v $(pwd):/home/ramses-build/git:ro -v $(pwd)/../build:/home/ramses-build/build ramses-basic /bin/sh -c "ls -lah; pwd; ./build-ramses.sh"
