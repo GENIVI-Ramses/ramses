@@ -14,6 +14,8 @@ before_install:
   - sudo apt-get install -qq g++-5
   - export CXX="g++-5"
   - export CC="gcc-5"
+  - echo -n | openssl s_client -connect scan.coverity.com:443 | sed -ne '/-BEGIN CERTIFICATE-/,/-END CERTIFICATE-/p' | sudo tee -a /etc/ssl/certs/ca-
+
 
 addons:
   coverity_scan:
