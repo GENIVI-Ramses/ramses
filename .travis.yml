@@ -31,6 +31,5 @@ script:
   - if [[ "${COVERITY_SCAN_BRANCH}" == 1 ]];
       then
         echo "Don't build on coverty_scan branch.";
-        cat /home/travis/build/GENIVI-Ramses/ramses/build/cov-int/scm_log.txt
         exit 0;
     fi
