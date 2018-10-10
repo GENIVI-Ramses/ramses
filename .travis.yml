@@ -17,19 +17,22 @@ before_install:
   - echo -n | openssl s_client -connect scan.coverity.com:443 | sed -ne '/-BEGIN CERTIFICATE-/,/-END CERTIFICATE-/p' | sudo tee -a /etc/ssl/certs/ca-
 
 
-addons:
-  coverity_scan:
-    project:
-      name: "GENIVI-Ramses/ramses"
-      description: "RAMSES"
-    notification_email: ramses@genivi.org
-    build_command_prepend: "cov-configure --comptype gcc --compiler gcc-5 --template; cov-configure --comptype gcc --compiler g++-5; mkdir build; cd build; cmake -DCMAKE_BUILD_TYPE=Debug -Dramses-sdk_BUILD_TESTS=0 .."
-    build_command: "make"
-    branch_pattern: coverity_scan
+#addons:
+#  coverity_scan:
+#    project:
+#      name: "GENIVI-Ramses/ramses"
+#      description: "RAMSES"
+#    notification_email: ramses@genivi.org
+#    build_command_prepend: "cov-configure --comptype gcc --compiler gcc-5 --template; cov-configure --comptype gcc --compiler g++-5; mkdir build; cd build; cmake -DCMAKE_BUILD_TYPE=Debug -Dramses-sdk_BUILD_TESTS=0 .."
+#    build_command: "make"
+#    branch_pattern: coverity_scan
 
 script:
-  - if [[ "${COVERITY_SCAN_BRANCH}" == 1 ]];
-      then
-        echo "Don't build on coverty_scan branch.";
-        exit 0;
-    fi
+  - curl -s https://scan.coverity.com/scripts/travisci_build_coverity_scan.sh -o travisci_build_coverity_scan.sh
+  - export COVERITY_SCAN_PROJECT_NAME="$PROJECT_NAME" 
+  - export COVERITY_SCAN_NOTIFICATION_EMAIL="${COVERITY_SCAN_NOTIFICATION_EMAIL:-ramses@genivi.org}" 
+  - export COVERITY_SCAN_BUILD_COMMAND="${COVERITY_SCAN_BUILD_COMMAND:-make}" 
+  - export COVERITY_SCAN_BUILD_COMMAND_PREPEND="${COVERITY_SCAN_BUILD_COMMAND_PREPEND:-cov-configure --comptype gcc --compiler gcc-5 --template; cov-configure --comptype gcc --compiler g++-5; mkdir build; cd build; cmake -DCMAKE_BUILD_TYPE=Debug -Dramses-sdk_BUILD_TESTS=0 ..}"
+  - export COVERITY_SCAN_BRANCH_PATTERN=${COVERITY_SCAN_BRANCH_PATTERN:-coverity_scan} 
+  - patch < 0001-travis-fix-travisci_build_coverity_scan.sh.patch
+  - bash ./travisci_build_coverity_scan.sh
