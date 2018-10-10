@@ -21,7 +21,7 @@ addons:
       name: "GENIVI-Ramses/ramses"
       description: "RAMSES"
     notification_email: ramses@genivi.org
-    build_command_prepend: "cov-configure --comptype gcc --compiler gcc-5 --template && mkdir build; cd build; cmake -DCMAKE_BUILD_TYPE=Debug .."
+    build_command_prepend: "cov-configure --comptype gcc --compiler gcc-5 --template && mkdir build; cd build; cmake -DCMAKE_BUILD_TYPE=Debug -Dramses-sdk_BUILD_TESTS=0 .."
     build_command: "cmake --build ."
     branch_pattern: coverity_scan
 
