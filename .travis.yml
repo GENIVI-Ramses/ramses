@@ -29,7 +29,7 @@ before_install:
 
 script:
   - curl -s https://scan.coverity.com/scripts/travisci_build_coverity_scan.sh -o travisci_build_coverity_scan.sh
-  - export COVERITY_SCAN_PROJECT_NAME="$PROJECT_NAME" 
+  - export COVERITY_SCAN_PROJECT_NAME=GENIVI-Ramses/ramses 
   - export COVERITY_SCAN_NOTIFICATION_EMAIL="${COVERITY_SCAN_NOTIFICATION_EMAIL:-ramses@genivi.org}" 
   - export COVERITY_SCAN_BUILD_COMMAND="${COVERITY_SCAN_BUILD_COMMAND:-make}" 
   - export COVERITY_SCAN_BUILD_COMMAND_PREPEND="${COVERITY_SCAN_BUILD_COMMAND_PREPEND:-cov-configure --comptype gcc --compiler gcc-5 --template; cov-configure --comptype gcc --compiler g++-5; mkdir build; cd build; cmake -DCMAKE_BUILD_TYPE=Debug -Dramses-sdk_BUILD_TESTS=0 ..}"
