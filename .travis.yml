@@ -6,20 +6,34 @@ env:
   global:
    # The next declaration is the encrypted COVERITY_SCAN_TOKEN, created
    #   via the "travis encrypt" command using the project repo's public key
-   - secure: "QyTo6MjRTfDpSnLstbB3+0SaF7CpEa22Q2VCk6Kym6JWyQijCkFQ08TTg/GzA+CXsB/RhP0A8j4an7RiC5kUol2NQCV3vd12bE+X+Yo9g6QwkY2hFvFe+3Q3GC4z4myIa5jpnNTgGSekH2b7foI6uUF02x8J5xNXhusLyoKNS44//rigwAZi1EcgYwzrrlOqSfqcA1GQjgDt/vuuXYP1I4EyAZo0jTTBJMhyBvRZc7uaIWKCDzmlu+u5j++L9YnzvKNOuBByvBDdXCIe612S02zYGqNtkqV9O2SJPb1FzC14R2H8suMjVmnORo1vot8p2/rX0vA+s0qLzEjJ08tjkbL/T2+XGjYoYrN4j7KYFrZsmhGIMGOjAc2cmqY7ska/CxUzmIUEds3/Kpv0CNCuEV5lXKNm111AV6chTB1Uz9wRaXWFszU0FE45oB91+J9+CTsGnFduDv4gqQ09hkDESO+G+0huXALt2NEJEMfjQ6WXyYx3unGAfWj3QZLSojx/RRCJeMo9XX6uU6yhyLoAX4eyv0S6lBasVAz21OcDrOqad7CpvcL1vw7HcRHj7UHp3tHvaXBEPOJbj6K53cTHyBq8r4OjjdphoBspnhpAHFPJ7PLKIBdPxz7TZIKccO8DI6FjVLBohefywHj7nqy1iY201gCtZEty3udUVevdpOI="
+   secure: "Fap7w3/EkoI47HTiHLIWMrQPNZzGK2x86otjoENHvHvu2/2phYDWJEnsRVqMUq9CVw9Dw/rbajbM8qp53oEI1sBqc3UowryAdshUosw5FfDsau4MJsTQrTBLRDc8pEuBux51ULlnxxP2JXdM3f/96Xi7e+PxVO/vGGCLCcmJd/8nUhZ28SXVJYQ5eAeUrNWuimI8Ba+ldFHNgQKcvFdLtyBIXFlMBYmuBqjut8+O+s7YeCvjkrhA4G0RfR62ZMo4ztCm+DqZbvFmOPCuFJOb09wcbblcYwR9kWwTWi/6NVH27gJ2hM5pq3J4j98G6CcV5TzqZFukpXypWNDPtRSjits54GTL3ZhvDIc4lWCd21Kv+NpXSZcph0iOJf3elKmu0dwHw4rgY3ySUBk7U2u6doKFfCMrQYIfHvlH1HE7h0eyIXU7ukzMW6qAuviXj6W/+tmYVI5+OTQ5R/t5AbwAheY+/4cZu2HWb0a0sNe2NY6YQGKbVHJ7p0CwSMzzgH2THsoBAyHtWvOwTkc566fzQGNUHQ1nn3nMl/qzTRxLiqCenkGoZ3FRVj4q+Yb400vA/qxhP4WUWy5QWGlzgtE5xSAKziFQfdtRWz32lsOgd2g2j3Xa5JW/TWjcR+FHL+Rlxp13VJDfYO8LCYSqGfo7zXdvO8kvLCJjPkFwpY58trk="
 
 before_install:
-  - echo -n | openssl s_client -connect https://scan.coverity.com:443 | sed -ne '/-BEGIN CERTIFICATE-/,/-END CERTIFICATE-/p' | sudo tee -a /etc/ssl/certs/ca-
+  - sudo add-apt-repository -y ppa:ubuntu-toolchain-r/test
+  - sudo apt-get update -qq
+  - sudo apt-get install -qq g++-5
+  - export CXX="g++-5"
+  - export CC="gcc-5"
+  - echo -n | openssl s_client -connect scan.coverity.com:443 | sed -ne '/-BEGIN CERTIFICATE-/,/-END CERTIFICATE-/p' | sudo tee -a /etc/ssl/certs/ca-
 
-addons:
-  coverity_scan:
-    project:
-      name: "GENIVI-Ramses/ramses"
-      description: "RAMSES"
-    notification_email: ramses@genivi.org
-    build_command_prepend: "mkdir build; cd build; cmake .."
-    build_command: "cd build; cmake --build ."
-    branch_pattern: coverity_scan
+
+#addons:
+#  coverity_scan:
+#    project:
+#      name: "GENIVI-Ramses/ramses"
+#      description: "RAMSES"
+#    notification_email: ramses@genivi.org
+#    build_command_prepend: "cov-configure --comptype gcc --compiler gcc-5 --template; cov-configure --comptype gcc --compiler g++-5; mkdir build; cd build; cmake -DCMAKE_BUILD_TYPE=Debug -Dramses-sdk_BUILD_TESTS=0 .."
+#    build_command: "make"
+#    branch_pattern: coverity_scan
 
 script:
-  - exit 0;
+  - curl -s https://scan.coverity.com/scripts/travisci_build_coverity_scan.sh -o travisci_build_coverity_scan.sh
+  - export COVERITY_SCAN_PROJECT_NAME=GENIVI-Ramses/ramses 
+  - export COVERITY_SCAN_NOTIFICATION_EMAIL="${COVERITY_SCAN_NOTIFICATION_EMAIL:-ramses@genivi.org}" 
+  - export COVERITY_SCAN_BUILD_COMMAND="${COVERITY_SCAN_BUILD_COMMAND:-make}" 
+  - export COVERITY_SCAN_BUILD_COMMAND_PREPEND="${COVERITY_SCAN_BUILD_COMMAND_PREPEND:-cov-configure --comptype gcc --compiler gcc-5 --template; cov-configure --comptype gcc --compiler g++-5; mkdir build; cd build; cmake -DCMAKE_BUILD_TYPE=Debug -Dramses-sdk_BUILD_TESTS=0 ..}"
+  - export COVERITY_SCAN_BRANCH_PATTERN=${COVERITY_SCAN_BRANCH_PATTERN:-coverity_scan} 
+  - patch < 0001-travis-fix-travisci_build_coverity_scan.sh.patch
+  - bash ./travisci_build_coverity_scan.sh
+  - cat cov-int/build-log.txt
