@@ -1,0 +1,25 @@
+language: cpp
+
+compiler: gcc
+
+env:
+  global:
+   # The next declaration is the encrypted COVERITY_SCAN_TOKEN, created
+   #   via the "travis encrypt" command using the project repo's public key
+   - secure: "QyTo6MjRTfDpSnLstbB3+0SaF7CpEa22Q2VCk6Kym6JWyQijCkFQ08TTg/GzA+CXsB/RhP0A8j4an7RiC5kUol2NQCV3vd12bE+X+Yo9g6QwkY2hFvFe+3Q3GC4z4myIa5jpnNTgGSekH2b7foI6uUF02x8J5xNXhusLyoKNS44//rigwAZi1EcgYwzrrlOqSfqcA1GQjgDt/vuuXYP1I4EyAZo0jTTBJMhyBvRZc7uaIWKCDzmlu+u5j++L9YnzvKNOuBByvBDdXCIe612S02zYGqNtkqV9O2SJPb1FzC14R2H8suMjVmnORo1vot8p2/rX0vA+s0qLzEjJ08tjkbL/T2+XGjYoYrN4j7KYFrZsmhGIMGOjAc2cmqY7ska/CxUzmIUEds3/Kpv0CNCuEV5lXKNm111AV6chTB1Uz9wRaXWFszU0FE45oB91+J9+CTsGnFduDv4gqQ09hkDESO+G+0huXALt2NEJEMfjQ6WXyYx3unGAfWj3QZLSojx/RRCJeMo9XX6uU6yhyLoAX4eyv0S6lBasVAz21OcDrOqad7CpvcL1vw7HcRHj7UHp3tHvaXBEPOJbj6K53cTHyBq8r4OjjdphoBspnhpAHFPJ7PLKIBdPxz7TZIKccO8DI6FjVLBohefywHj7nqy1iY201gCtZEty3udUVevdpOI="
+
+before_install:
+  - echo -n | openssl s_client -connect https://scan.coverity.com:443 | sed -ne '/-BEGIN CERTIFICATE-/,/-END CERTIFICATE-/p' | sudo tee -a /etc/ssl/certs/ca-
+
+addons:
+  coverity_scan:
+    project:
+      name: "GENIVI-Ramses/ramses"
+      description: "RAMSES"
+    notification_email: ramses@genivi.org
+    build_command_prepend: "mkdir build; cd build; cmake .."
+    build_command: "cd build; cmake --build ."
+    branch_pattern: coverity_scan
+
+script:
+  - exit 0;
